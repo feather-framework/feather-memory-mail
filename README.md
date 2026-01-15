@@ -43,3 +43,7 @@ let package = Package(
     ]
 )
 ```
+
+### Documentation
+
+For more information, see the  official [API documentation](https://feather-framework.github.io/feather-mail-driver-memory/documentation/) for this package.
