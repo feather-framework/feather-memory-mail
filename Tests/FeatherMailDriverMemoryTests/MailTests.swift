@@ -28,7 +28,7 @@ extension Mail {
 // MARK: - Mail Validation Tests
 
 @Test
-func mail_invalidSender_throws() {
+func mailInvalidSender() {
     #expect(throws: MailError.invalidSender) {
         try Mail(
             from: .init("   "),
@@ -40,7 +40,7 @@ func mail_invalidSender_throws() {
 }
 
 @Test
-func mail_invalidSubject_throws() {
+func mailInvalidSubject() {
     #expect(throws: MailError.invalidSubject) {
         try Mail(
             from: .init("sender@example.com"),
@@ -52,7 +52,7 @@ func mail_invalidSubject_throws() {
 }
 
 @Test
-func mail_invalidRecipient_throws() {
+func mailInvalidRecipient() {
     #expect(throws: MailError.invalidRecipient) {
         try Mail(
             from: .init("sender@example.com"),
@@ -64,7 +64,7 @@ func mail_invalidRecipient_throws() {
 }
 
 @Test
-func mail_filtersInvalidAddresses() throws {
+func mailFiltersInvalidAddresses() throws {
     let mail = try Mail(
         from: .init("sender@example.com"),
         to: [.init("valid@example.com"), .init("   ")],
@@ -80,7 +80,7 @@ func mail_filtersInvalidAddresses() throws {
 }
 
 @Test
-func mail_validConstruction_succeeds() throws {
+func mailValidConstructionSucceeds() throws {
     let mail = try Mail.valid()
     #expect(mail.subject == "Hello")
 }
