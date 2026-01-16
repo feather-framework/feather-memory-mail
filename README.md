@@ -1,19 +1,37 @@
 # Feather Mail Driver Memory
 
-A mail driver for the Feather CMS mail component using AWS Memory.
+MailMemory provides an in-memory mail driver and mailbox implementation for testing, previews, and local development.
+
+It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
 
 ## Getting started
 
-⚠️ This repository is a work in progress, things can break until it reaches v1.0.0. 
+MailMemory is primarily intended for use in tests.
+You can find working examples in the `Tests` directory.
 
-Use at your own risk.
+```swift
+let driver = MemoryMailDriver()
 
-### Adding the dependency
+let mail = Mail(
+    from: .init("from@example.com"),
+    to: [.init("to@example.com")],
+    subject: "Hello",
+    body: .plainText("Body")
+)
+
+try await driver.send(mail)
+
+let mailbox = await driver.getMailbox()
+```
+
+Requires Swift `6.1` or later.
+
+## Adding the dependency
 
 To add a dependency on the package, declare it in your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/feather-framework/feather-mail-driver-memory.git", .upToNextMinor(from: "0.2.0")),
+.package(url: "https://github.com/feather-framework/feather-mail-driver-memory.git", .upToNextMinor(from: "1.0.0-beta.1")),
 ```
 
 and to your application target, add `FeatherMailDriverMemory` to your dependencies:
@@ -25,13 +43,13 @@ and to your application target, add `FeatherMailDriverMemory` to your dependenci
 Example `Package.swift` file with `FeatherMailDriverMemory` as a dependency:
 
 ```swift
-// swift-tools-version:5.9
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
     name: "my-application",
     dependencies: [
-        .package(url: "https://github.com/feather-framework/feather-mail-driver-memory.git", .upToNextMinor(from: "0.2.0")),
+        .package(url: "https://github.com/feather-framework/feather-mail-driver-memory.git", .upToNextMinor(from: "1.0.0-beta.1")),
     ],
     targets: [
         .target(name: "MyApplication", dependencies: [
@@ -44,6 +62,6 @@ let package = Package(
 )
 ```
 
-### Documentation
+## Documentation
 
 For more information, see the  official [API documentation](https://feather-framework.github.io/feather-mail-driver-memory/documentation/) for this package.
