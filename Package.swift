@@ -24,8 +24,7 @@ let package = Package(
         .library(name: "FeatherMailDriverMemory", targets: ["FeatherMailDriverMemory"]),
     ],
     dependencies: [
-        //.package(url: "https://github.com/feather-framework/feather-mail.git", .upToNextMinor(from: "0.5.0"))
-        .package(path: "../feather-mail")
+        .package(url: "https://github.com/feather-framework/feather-mail.git", .upToNextMinor(from: "1.0.0-beta.1")),
     ],
     targets: [
         .target(
