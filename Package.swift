@@ -1,7 +1,7 @@
-// swift-tools-version:6.2
+// swift-tools-version:6.1
 import PackageDescription
 
-let defaultSwiftSettings: [SwiftSetting] = [
+var defaultSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v6),
     .enableExperimentalFeature(
         "AvailabilityMacro=FeatherMailAvailability:macOS 13, iOS 16, watchOS 9, tvOS 16, visionOS 1"
@@ -9,6 +9,14 @@ let defaultSwiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("MemberImportVisibility"),
     .enableExperimentalFeature("Lifetimes"),
 ]
+
+#if compiler(>=6.2)
+defaultSwiftSettings.append(
+    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0461-async-function-isolation.md
+    .enableUpcomingFeature("NonisolatedNonsendingByDefault")
+)
+#endif
+
 
 let package = Package(
     name: "feather-mail-driver-memory",

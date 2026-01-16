@@ -2,7 +2,7 @@
 //  MemoryMailDriver.swift
 //  feather-mail-driver-memory
 //
-//  Created by Tibor Bodecs on 2020. 04. 28..
+//  Created by Tibor Bödecs on 2020. 04. 28..
 //
 
 import Foundation
@@ -10,20 +10,24 @@ import FeatherMail
 
 /// An in-memory mail driver implementation.
 ///
-/// `MemoryMailDriver` conforms to `MailProtocol` and delivers mails
-/// to an in-memory, actor-isolated mailbox. It is intended for:
-/// - testing
-/// - previews
-/// - local development
+/// `MemoryMailDriver` conforms to `MailProtocol` and delivers mails to an
+/// actor-isolated `MemoryMail` instance. Incoming mails are validated
+/// before being stored, mirroring the behavior of real mail transports.
 ///
-/// This driver never performs network operations and does not persist data.
-/// All stored mails are lost when the process terminates.
+/// This driver is intended for testing, previews, and local development.
+/// It does not perform network operations and does not persist data.
 public struct MemoryMailDriver: Sendable {
 
-    /// Actor-backed mailbox used to store delivered mails.
+    /// The underlying in-memory mailbox used for validated storage.
+    private let memoryMail: MemoryMail
+
+    /// Creates a new in-memory mail driver.
     ///
-    /// Each `MemoryMailDriver` instance owns its own isolated mailbox.
-    private let memoryMail: MemoryMail = .init()
+    /// - Parameter memoryMail: The mailbox instance used for storage.
+    ///   Defaults to a new `MemoryMail` instance.
+    init(memoryMail: MemoryMail = MemoryMail()) {
+        self.memoryMail = memoryMail
+    }
 }
 
 extension MemoryMailDriver: MailProtocol {
@@ -34,7 +38,7 @@ extension MemoryMailDriver: MailProtocol {
     /// - Throws: `MailError` only if required by `MailProtocol`.
     ///   This implementation never fails during delivery.
     public func send(_ email: Mail) async throws(MailError) {
-        await memoryMail.add(email)
+        try await memoryMail.add(email)
     }
 }
 

@@ -4,80 +4,192 @@
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
-
+import Foundation
 import Testing
 @testable import FeatherMailDriverMemory
 @testable import FeatherMail
 
-@Test
-func driverSendStoresMail() async throws {
-    let driver = MemoryMailDriver()
+@Suite
+struct MemoryMailTests {
 
-    let mail = try Mail.valid()
-    try await driver.send(mail)
+    // MARK: - Validation
 
-    let mailbox = await driver.getMailbox()
-    #expect(mailbox.count == 1)
-}
+    @Test
+    func memoryMail_invalidSenderThrows() async {
+        let mailbox = MemoryMail()
 
-@Test
-func driverPreservesInsertionOrder() async throws {
-    let driver = MemoryMailDriver()
+        let mail = Mail(
+            from: .init("   "),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
 
-    let first = try Mail.valid(subject: "First")
-    let second = try Mail.valid(subject: "Second")
-
-    try await driver.send(first)
-    try await driver.send(second)
-
-    let mailbox = await driver.getMailbox()
-    #expect(mailbox.map(\.subject) == ["First", "Second"])
-}
-
-@Test
-func driverClearMailboxRemovesAll() async throws {
-    let driver = MemoryMailDriver()
-
-    try await driver.send(.valid())
-    try await driver.send(.valid(subject: "Another"))
-
-    await driver.clearMailbox()
-
-    let mailbox = await driver.getMailbox()
-    #expect(mailbox.isEmpty)
-}
-
-@Test
-func driverClearEmptyMailboxIsSafe() async {
-    let driver = MemoryMailDriver()
-
-    await driver.clearMailbox()
-
-    let mailbox = await driver.getMailbox()
-    #expect(mailbox.isEmpty)
-}
-
-@Test
-func driverSendNeverThrows() async throws {
-    let driver = MemoryMailDriver()
-    let mail = try Mail.valid()
-
-    try await driver.send(mail)
-}
-
-@Test
-func driverIsConcurrencySafe() async throws {
-    let driver = MemoryMailDriver()
-
-    await withTaskGroup(of: Void.self) { group in
-        for i in 0..<100 {
-            group.addTask {
-                let mail = try! Mail.valid(subject: "Mail \(i)")
-                try! await driver.send(mail)
-            }
+        await #expect(throws: MailError.invalidSender) {
+            try await mailbox.add(mail)
         }
     }
 
-    let mailbox = await driver.getMailbox()
-    #expect(mailbox.count == 100)
+    @Test
+    func memoryMail_invalidSubjectThrows() async {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "   ",
+            body: .plainText("Body")
+        )
+
+        await #expect(throws: MailError.invalidSubject) {
+            try await mailbox.add(mail)
+        }
+    }
+
+    @Test
+    func memoryMail_invalidRecipientThrows() async {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("   ")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
+
+        await #expect(throws: MailError.invalidRecipient) {
+            try await mailbox.add(mail)
+        }
+    }
+
+    @Test
+    func memoryMail_attachmentsTooLargeThrows() async {
+        let validator = DefaultMailValidator(
+            maxTotalAttachmentSize: 100
+        )
+        let mailbox = MemoryMail(validator: validator)
+
+        let data = Data(repeating: 0, count: 1_024)
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body"),
+            attachments: [
+                .init(
+                    name: "feather.png",
+                    contentType: "image/png",
+                    data: data
+                )
+            ]
+        )
+
+        await #expect(throws: MailError.attachmentsTooLarge) {
+            try await mailbox.add(mail)
+        }
+    }
+
+    @Test
+    func memoryMail_headerInjectionThrows() async {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello\nInjected",
+            body: .plainText("Body")
+        )
+
+        await #expect(throws: MailError.headerInjectionDetected) {
+            try await mailbox.add(mail)
+        }
+    }
+
+    // MARK: - Storage behavior
+
+    @Test
+    func memoryMail_storesValidMail() async throws {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
+
+        try await mailbox.add(mail)
+
+        let stored = await mailbox.getMailbox()
+        #expect(stored.count == 1)
+        #expect(stored.first?.subject == "Hello")
+    }
+
+    @Test
+    func memoryMail_preservesInsertionOrder() async throws {
+        let mailbox = MemoryMail()
+
+        let first = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "First",
+            body: .plainText("Body")
+        )
+
+        let second = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Second",
+            body: .plainText("Body")
+        )
+
+        try await mailbox.add(first)
+        try await mailbox.add(second)
+
+        let stored = await mailbox.getMailbox()
+        #expect(stored.map(\.subject) == ["First", "Second"])
+    }
+
+    @Test
+    func memoryMail_clearRemovesAll() async throws {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
+
+        try await mailbox.add(mail)
+        await mailbox.clear()
+
+        let stored = await mailbox.getMailbox()
+        #expect(stored.isEmpty)
+    }
+
+    // MARK: - Concurrency
+
+    @Test
+    func memoryMail_isConcurrencySafe() async throws {
+        let mailbox = MemoryMail()
+
+        await withTaskGroup(of: Void.self) { group in
+            for i in 0..<100 {
+                group.addTask {
+                    let mail = Mail(
+                        from: .init("from@example.com"),
+                        to: [.init("to@example.com")],
+                        subject: "Mail \(i)",
+                        body: .plainText("Body")
+                    )
+                    try! await mailbox.add(mail)
+                }
+            }
+        }
+
+        let stored = await mailbox.getMailbox()
+        #expect(stored.count == 100)
+    }
 }

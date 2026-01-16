@@ -2,7 +2,7 @@
 //  MemoryMail.swift
 //  feather-mail-driver-memory
 //
-//  Created by Tibor Bodecs on 19/11/2023.
+//  Created by Tibor Bödecs on 2026. 01. 15..
 //
 
 import Foundation
@@ -10,34 +10,43 @@ import FeatherMail
 
 /// An in-memory, actor-isolated mailbox used for testing and development.
 ///
-/// `MemoryMail` provides a thread-safe storage for delivered `Mail` values.
-/// It guarantees:
-/// - serialized access to internal state via Swift Concurrency
-/// - preservation of insertion order
-/// - no persistence beyond process lifetime
+/// `MemoryMail` validates incoming mail using a `MailValidating`
+/// implementation before storing it. This mirrors the behavior of
+/// real mail drivers, where validation occurs prior to delivery.
 ///
-/// This type is intentionally simple and is not intended for production use.
+/// Stored mails are kept in insertion order and are not persisted.
 final actor MemoryMail {
 
     /// Stored mails in the order they were added.
     private var delivered: [Mail]
 
-    /// Creates an empty in-memory mailbox.
-    init() {
+    /// Validator used to validate mails before storage.
+    private let validator: MailValidating
+
+    /// Creates a new in-memory mailbox.
+    ///
+    /// - Parameter validator: The validator used to validate mails
+    ///   before they are stored. Defaults to `DefaultMailValidator`.
+    init(
+        validator: MailValidating = DefaultMailValidator()
+    ) {
         self.delivered = []
+        self.validator = validator
     }
 
     /// Returns all delivered mails.
     ///
-    /// - Returns: A snapshot of the current mailbox contents.
+    /// - Returns: A snapshot of the mailbox contents.
     func getMailbox() -> [Mail] {
         delivered
     }
 
-    /// Adds a new mail to the mailbox.
+    /// Validates and stores a mail.
     ///
-    /// - Parameter mail: A validated `Mail` instance to store.
-    func add(_ mail: Mail) {
+    /// - Parameter mail: The mail to validate and store.
+    /// - Throws: `MailError` if validation fails.
+    func add(_ mail: Mail) throws(MailError) {
+        try validator.validate(mail)
         delivered.append(mail)
     }
 
