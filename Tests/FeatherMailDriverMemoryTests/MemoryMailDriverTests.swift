@@ -4,13 +4,20 @@
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
-import Foundation
 import Testing
 @testable import FeatherMailDriverMemory
 @testable import FeatherMail
 
 @Suite
 struct MemoryMailTests {
+
+    private struct RejectingValidator: MailValidator {
+        let error: MailValidationError
+
+        func validate(_ mail: Mail) async throws(MailValidationError) {
+            throw error
+        }
+    }
 
     // MARK: - Validation
 
@@ -25,7 +32,7 @@ struct MemoryMailTests {
             body: .plainText("Body")
         )
 
-        await #expect(throws: MailError.invalidSender) {
+        await #expect(throws: MailValidationError.invalidSender) {
             try await mailbox.add(mail)
         }
     }
@@ -41,7 +48,7 @@ struct MemoryMailTests {
             body: .plainText("Body")
         )
 
-        await #expect(throws: MailError.invalidSubject) {
+        await #expect(throws: MailValidationError.invalidSubject) {
             try await mailbox.add(mail)
         }
     }
@@ -57,19 +64,19 @@ struct MemoryMailTests {
             body: .plainText("Body")
         )
 
-        await #expect(throws: MailError.invalidRecipient) {
+        await #expect(throws: MailValidationError.invalidRecipient) {
             try await mailbox.add(mail)
         }
     }
 
     @Test
     func memoryMail_attachmentsTooLargeThrows() async {
-        let validator = DefaultMailValidator(
+        let validator = BasicMailValidator(
             maxTotalAttachmentSize: 100
         )
         let mailbox = MemoryMail(validator: validator)
 
-        let data = Data(repeating: 0, count: 1_024)
+        let data = [UInt8](repeating: 0, count: 1_024)
 
         let mail = Mail(
             from: .init("from@example.com"),
@@ -85,7 +92,7 @@ struct MemoryMailTests {
             ]
         )
 
-        await #expect(throws: MailError.attachmentsTooLarge) {
+        await #expect(throws: MailValidationError.attachmentsTooLarge) {
             try await mailbox.add(mail)
         }
     }
@@ -101,7 +108,25 @@ struct MemoryMailTests {
             body: .plainText("Body")
         )
 
-        await #expect(throws: MailError.headerInjectionDetected) {
+        await #expect(throws: MailValidationError.headerInjectionDetected) {
+            try await mailbox.add(mail)
+        }
+    }
+
+    @Test
+    func memoryMail_customValidatorIsUsed() async {
+        let mailbox = MemoryMail(
+            validator: RejectingValidator(error: .invalidSubject)
+        )
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
+
+        await #expect(throws: MailValidationError.invalidSubject) {
             try await mailbox.add(mail)
         }
     }
@@ -164,6 +189,23 @@ struct MemoryMailTests {
 
         try await mailbox.add(mail)
         await mailbox.clear()
+
+        let stored = await mailbox.getMailbox()
+        #expect(stored.isEmpty)
+    }
+
+    @Test
+    func memoryMail_validateDoesNotStoreMail() async throws {
+        let mailbox = MemoryMail()
+
+        let mail = Mail(
+            from: .init("from@example.com"),
+            to: [.init("to@example.com")],
+            subject: "Hello",
+            body: .plainText("Body")
+        )
+
+        try await mailbox.validate(mail)
 
         let stored = await mailbox.getMailbox()
         #expect(stored.isEmpty)

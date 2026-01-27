@@ -5,12 +5,11 @@
 //  Created by Tibor Bödecs on 2020. 04. 28..
 //
 
-import Foundation
 import FeatherMail
 
 /// An in-memory mail driver implementation.
 ///
-/// `MemoryMailDriver` conforms to `MailProtocol` and delivers mails to an
+/// `MemoryMailDriver` conforms to `MailClient` and delivers mails to an
 /// actor-isolated `MemoryMail` instance. Incoming mails are validated
 /// before being stored, mirroring the behavior of real mail transports.
 ///
@@ -25,20 +24,32 @@ public struct MemoryMailDriver: Sendable {
     ///
     /// - Parameter memoryMail: The mailbox instance used for storage.
     ///   Defaults to a new `MemoryMail` instance.
-    init(memoryMail: MemoryMail = MemoryMail()) {
+    public init(memoryMail: MemoryMail = MemoryMail()) {
         self.memoryMail = memoryMail
     }
 }
 
-extension MemoryMailDriver: MailProtocol {
+extension MemoryMailDriver: MailClient {
 
     /// Sends a mail by storing it in memory.
     ///
-    /// - Parameter email: A pre-validated `Mail` instance.
-    /// - Throws: `MailError` only if required by `MailProtocol`.
-    ///   This implementation never fails during delivery.
-    public func send(_ email: Mail) async throws(MailError) {
-        try await memoryMail.add(email)
+    /// - Parameter mail: The mail to validate and store.
+    /// - Throws: `MailError` if validation fails.
+    public func send(_ mail: Mail) async throws(MailError) {
+        do {
+            try await memoryMail.add(mail)
+        }
+        catch {
+            throw .validation(error)
+        }
+    }
+
+    /// Validates a mail using the in-memory validator.
+    ///
+    /// - Parameter mail: The mail to validate.
+    /// - Throws: `MailValidationError` when validation fails.
+    public func validate(_ mail: Mail) async throws(MailValidationError) {
+        try await memoryMail.validate(mail)
     }
 }
 
