@@ -25,8 +25,7 @@ let package = Package(
     ],
     dependencies: [
         // [docc-plugin-placeholder]
-        //.package(url: "https://github.com/feather-framework/feather-mail.git", .upToNextMinor(from: "1.0.0-beta.1")),
-        .package(path: "../feather-mail"),
+        .package(url: "https://github.com/feather-framework/feather-mail.git", .upToNextMinor(from: "1.0.0-beta.1")),
     ],
     targets: [
         .target(
