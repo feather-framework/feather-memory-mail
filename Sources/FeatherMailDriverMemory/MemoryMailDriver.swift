@@ -1,6 +1,6 @@
 //
 //  MemoryMailDriver.swift
-//  feather-mail-driver-memory
+//  feather-memory-mail
 //
 //  Created by Tibor Bödecs on 2020. 04. 28..
 //

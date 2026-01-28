@@ -1,6 +1,6 @@
 //
 //  MemoryMailDriverClientTests.swift
-//  feather-mail-driver-memory
+//  feather-memory-mail
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
@@ -95,7 +95,8 @@ struct MemoryMailDriverClientTests {
         do {
             try await driver.send(mail)
             #expect(Bool(false))
-        } catch let error {
+        }
+        catch let error {
             #expect(error == .validation(.invalidSubject))
         }
 

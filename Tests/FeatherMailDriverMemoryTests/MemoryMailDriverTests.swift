@@ -1,6 +1,6 @@
 //
 //  MemoryMailDriverTests.swift
-//  feather-mail-driver-memory
+//  feather-memory-mail
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
