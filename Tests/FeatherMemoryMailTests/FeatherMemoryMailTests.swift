@@ -95,9 +95,13 @@ struct FeatherMemoryMailTests {
         do {
             try await driver.send(mail)
             #expect(Bool(false))
-        }
-        catch let error {
-            #expect(error == .validation(.invalidSubject))
+        } catch {
+            if case let .validation(validationError) = error,
+               validationError == .invalidSubject {
+                #expect(true)
+            } else {
+                #expect(Bool(false))
+            }
         }
 
         let stored = await driver.getMailbox()
