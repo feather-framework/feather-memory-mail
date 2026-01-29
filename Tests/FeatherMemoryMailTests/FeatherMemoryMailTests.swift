@@ -1,15 +1,15 @@
 //
-//  MemoryMailDriverClientTests.swift
+//  FeatherMemoryMailTests.swift
 //  feather-memory-mail
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
 import Testing
-@testable import FeatherMailDriverMemory
+@testable import FeatherMemoryMail
 @testable import FeatherMail
 
 @Suite
-struct MemoryMailDriverClientTests {
+struct FeatherMemoryMailTests {
 
     private struct RejectingValidator: MailValidator {
         let error: MailValidationError

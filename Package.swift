@@ -25,24 +25,24 @@ defaultSwiftSettings.append(
 let package = Package(
     name: "feather-memory-mail",
     products: [
-        .library(name: "FeatherMailDriverMemory", targets: ["FeatherMailDriverMemory"]),
+        .library(name: "FeatherMemoryMail", targets: ["FeatherMemoryMail"]),
     ],
     dependencies: [
         // [docc-plugin-placeholder]
-        .package(url: "https://github.com/feather-framework/feather-mail.git", .upToNextMinor(from: "1.0.0-beta.1")),
+        .package(url: "https://github.com/feather-framework/feather-mail", .upToNextMinor(from: "1.0.0-beta.1")),
     ],
     targets: [
         .target(
-            name: "FeatherMailDriverMemory",
+            name: "FeatherMemoryMail",
             dependencies: [
                 .product(name: "FeatherMail", package: "feather-mail"),
             ]
         ),
         .testTarget(
-            name: "FeatherMailDriverMemoryTests",
+            name: "FeatherMemoryMailTests",
             dependencies: [
                 .product(name: "FeatherMail", package: "feather-mail"),
-                .target(name: "FeatherMailDriverMemory"),
+                .target(name: "FeatherMemoryMail"),
             ]
         ),
     ]

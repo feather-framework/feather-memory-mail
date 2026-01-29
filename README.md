@@ -1,4 +1,4 @@
-# Feather Mail Driver Memory
+# Feather Memory Mail 
 
 In-memory mail driver for Feather Mail, designed for tests and local development.
 It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
@@ -37,10 +37,10 @@ Use Swift Package Manager; add the dependency to your `Package.swift` file:
 .package(url: "https://github.com/feather-framework/feather-memory-mail", exact: from: "1.0.0-beta.1"),
 ```
 
-Then add `FeatherMailDriverMemory` to your target dependencies:
+Then add `FeatherMemoryMail` to your target dependencies:
 
 ```swift
-.product(name: "FeatherMailDriverMemory", package: "feather-memory-mail"),
+.product(name: "FeatherMemoryMail", package: "feather-memory-mail"),
 ```
 
 ## Usage
@@ -76,8 +76,8 @@ let mailbox = await driver.getMailbox()
 ## Related repositories
 
 - [Feather Mail](https://github.com/feather-framework/feather-mail)
-- [Feather Mail SMTP](https://github.com/feather-framework/feather-smtp-mail)
-- [Feather Mail SES](https://github.com/feather-framework/feather-ses-mail)
+- [Feather SMTP Mail](https://github.com/feather-framework/feather-smtp-mail)
+- [Feather SES Mail](https://github.com/feather-framework/feather-ses-mail)
 
 ## Development
 
