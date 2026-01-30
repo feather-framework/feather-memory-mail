@@ -95,11 +95,14 @@ struct FeatherMemoryMailTests {
         do {
             try await driver.send(mail)
             #expect(Bool(false))
-        } catch {
+        }
+        catch {
             if case let .validation(validationError) = error,
-               validationError == .invalidSubject {
+                validationError == .invalidSubject
+            {
                 #expect(true)
-            } else {
+            }
+            else {
                 #expect(Bool(false))
             }
         }

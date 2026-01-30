@@ -3,9 +3,7 @@
 In-memory mail driver for Feather Mail, designed for tests and local development.
 It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
 
-[
-    ![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)
-](
+[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)](
     https://github.com/feather-framework/feather-memory-mail/releases/tag/1.0.0-beta.1
 )
 
@@ -45,9 +43,7 @@ Then add `FeatherMemoryMail` to your target dependencies:
 
 ## Usage
 
-[ 
-    ![DocC API documentation](https://img.shields.io/badge/DocC-API_documentation-F05138)
-](
+[![DocC API documentation](https://img.shields.io/badge/DocC-API_documentation-F05138)](
     https://feather-framework.github.io/feather-memory-mail/
 )
 

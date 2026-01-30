@@ -11,7 +11,7 @@ var defaultSwiftSettings: [SwiftSetting] = [
     // https://forums.swift.org/t/experimental-support-for-lifetime-dependencies-in-swift-6-2-and-beyond/78638
     .enableExperimentalFeature("Lifetimes"),
     // https://github.com/swiftlang/swift/pull/65218
-    .enableExperimentalFeature("AvailabilityMacro=FeatherMemoryMailAvailability:macOS 15, iOS 18, watchOS 9, tvOS 11, visionOS 2"),
+    .enableExperimentalFeature("AvailabilityMacro=featherMemoryMail:macOS 15, iOS 18, watchOS 9, tvOS 11, visionOS 2"),
 ]
 
 #if compiler(>=6.2)
@@ -36,14 +36,16 @@ let package = Package(
             name: "FeatherMemoryMail",
             dependencies: [
                 .product(name: "FeatherMail", package: "feather-mail"),
-            ]
+            ],
+            swiftSettings: defaultSwiftSettings
         ),
         .testTarget(
             name: "FeatherMemoryMailTests",
             dependencies: [
                 .product(name: "FeatherMail", package: "feather-mail"),
                 .target(name: "FeatherMemoryMail"),
-            ]
+            ],
+            swiftSettings: defaultSwiftSettings
         ),
     ]
 )
