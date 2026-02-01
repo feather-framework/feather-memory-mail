@@ -11,7 +11,7 @@ import FeatherMail
 ///
 /// `MemoryMail` validates incoming mail using a `MailValidator`
 /// implementation before storing it. This mirrors the behavior of
-/// real mail drivers, where validation occurs prior to delivery.
+/// real mail clients, where validation occurs prior to delivery.
 ///
 /// Stored mails are kept in insertion order and are not persisted.
 public actor MemoryMail {

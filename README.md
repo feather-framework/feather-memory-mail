@@ -1,6 +1,6 @@
 # Feather Memory Mail 
 
-In-memory mail driver for Feather Mail, designed for tests and local development.
+In-memory mail client for Feather Mail, designed for tests and local development.
 It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
 
 [![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)](
@@ -47,15 +47,15 @@ Then add `FeatherMemoryMail` to your target dependencies:
     https://feather-framework.github.io/feather-memory-mail/
 )
 
+API documentation is available at the following link.
+
 > [!WARNING]
 > This repository is a work in progress, things can break until it reaches v1.0.0.
 
 ### Example
 
-API documentation is available at the following link.
-
 ```swift
-let driver = MemoryMailDriver()
+let client = MemoryMailClient()
 
 let mail = Mail(
     from: .init("from@example.com"),
@@ -64,9 +64,9 @@ let mail = Mail(
     body: .plainText("Body")
 )
 
-try await driver.send(mail)
+try await client.send(mail)
 
-let mailbox = await driver.getMailbox()
+let mailbox = await client.getMailbox()
 ```
 
 ## Related repositories

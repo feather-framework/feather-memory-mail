@@ -1,27 +1,19 @@
 //
-//  FeatherMemoryMailTests.swift
+//  FeatherMemoryMailTestSuite.swift
 //  feather-memory-mail
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
 import Testing
+import FeatherMail
 @testable import FeatherMemoryMail
-@testable import FeatherMail
 
 @Suite
-struct FeatherMemoryMailTests {
-
-    private struct RejectingValidator: MailValidator {
-        let error: MailValidationError
-
-        func validate(_ mail: Mail) async throws(MailValidationError) {
-            throw error
-        }
-    }
+struct FeatherMemoryMailTestSuite {
 
     @Test
-    func driverSendStoresMail() async throws {
-        let driver = MemoryMailDriver()
+    func clientSendStoresMail() async throws {
+        let client = MemoryMailClient()
         let mail = Mail(
             from: .init("from@example.com"),
             to: [.init("to@example.com")],
@@ -29,15 +21,15 @@ struct FeatherMemoryMailTests {
             body: .plainText("Body")
         )
 
-        try await driver.send(mail)
-        let stored = await driver.getMailbox()
+        try await client.send(mail)
+        let stored = await client.getMailbox()
         #expect(stored.count == 1)
         #expect(stored.first?.subject == "Hello")
     }
 
     @Test
-    func driverValidateDoesNotThrowForValidMail() async throws {
-        let driver = MemoryMailDriver()
+    func clientValidateDoesNotThrowForValidMail() async throws {
+        let client = MemoryMailClient()
         let mail = Mail(
             from: .init("from@example.com"),
             to: [.init("to@example.com")],
@@ -45,12 +37,12 @@ struct FeatherMemoryMailTests {
             body: .plainText("Body")
         )
 
-        try await driver.validate(mail)
+        try await client.validate(mail)
     }
 
     @Test
-    func driverValidateThrowsForInvalidMail() async {
-        let driver = MemoryMailDriver()
+    func clientValidateThrowsForInvalidMail() async {
+        let client = MemoryMailClient()
         let mail = Mail(
             from: .init(" "),
             to: [.init("to@example.com")],
@@ -59,13 +51,13 @@ struct FeatherMemoryMailTests {
         )
 
         await #expect(throws: MailValidationError.invalidSender) {
-            try await driver.validate(mail)
+            try await client.validate(mail)
         }
     }
 
     @Test
-    func driverClearMailboxRemovesAll() async throws {
-        let driver = MemoryMailDriver()
+    func clientClearMailboxRemovesAll() async throws {
+        let client = MemoryMailClient()
         let mail = Mail(
             from: .init("from@example.com"),
             to: [.init("to@example.com")],
@@ -73,18 +65,18 @@ struct FeatherMemoryMailTests {
             body: .plainText("Body")
         )
 
-        try await driver.send(mail)
-        await driver.clearMailbox()
-        let stored = await driver.getMailbox()
+        try await client.send(mail)
+        await client.clearMailbox()
+        let stored = await client.getMailbox()
         #expect(stored.isEmpty)
     }
 
     @Test
-    func driverSendUsesInjectedValidator() async throws {
+    func clientSendUsesInjectedValidator() async throws {
         let mailbox = MemoryMail(
             validator: RejectingValidator(error: .invalidSubject)
         )
-        let driver = MemoryMailDriver(memoryMail: mailbox)
+        let client = MemoryMailClient(memoryMail: mailbox)
         let mail = Mail(
             from: .init("from@example.com"),
             to: [.init("to@example.com")],
@@ -93,7 +85,7 @@ struct FeatherMemoryMailTests {
         )
 
         do {
-            try await driver.send(mail)
+            try await client.send(mail)
             #expect(Bool(false))
         }
         catch {
@@ -107,7 +99,7 @@ struct FeatherMemoryMailTests {
             }
         }
 
-        let stored = await driver.getMailbox()
+        let stored = await client.getMailbox()
         #expect(stored.isEmpty)
     }
 }

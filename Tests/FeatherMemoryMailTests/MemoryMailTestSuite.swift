@@ -1,23 +1,15 @@
 //
-//  MemoryMailTests.swift
+//  MemoryMailTestSuite.swift
 //  feather-memory-mail
 //
 //  Created by Binary Birds on 2026. 01. 15..
 
 import Testing
+import FeatherMail
 @testable import FeatherMemoryMail
-@testable import FeatherMail
 
 @Suite
-struct MemoryMailTests {
-
-    private struct RejectingValidator: MailValidator {
-        let error: MailValidationError
-
-        func validate(_ mail: Mail) async throws(MailValidationError) {
-            throw error
-        }
-    }
+struct MemoryMailTestSuite {
 
     // MARK: - Validation
 

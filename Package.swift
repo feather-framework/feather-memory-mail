@@ -40,7 +40,7 @@ let package = Package(
             swiftSettings: defaultSwiftSettings
         ),
         .testTarget(
-            name: "FeatherMemoryMailTests",
+            name: "FeatherMemoryMailTestSuiteuite",
             dependencies: [
                 .product(name: "FeatherMail", package: "feather-mail"),
                 .target(name: "FeatherMemoryMail"),

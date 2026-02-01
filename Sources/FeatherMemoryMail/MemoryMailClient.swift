@@ -1,5 +1,5 @@
 //
-//  MemoryMailDriver.swift
+//  MemoryMailClient.swift
 //  feather-memory-mail
 //
 //  Created by Tibor Bödecs on 2020. 04. 28..
@@ -7,20 +7,20 @@
 
 import FeatherMail
 
-/// An in-memory mail driver implementation.
+/// An in-memory mail client implementation.
 ///
-/// `MemoryMailDriver` conforms to `MailClient` and delivers mails to an
+/// `MemoryMailClient` conforms to `MailClient` and delivers mails to an
 /// actor-isolated `MemoryMail` instance. Incoming mails are validated
 /// before being stored, mirroring the behavior of real mail transports.
 ///
-/// This driver is intended for testing, previews, and local development.
+/// This client is intended for testing, previews, and local development.
 /// It does not perform network operations and does not persist data.
-public struct MemoryMailDriver: Sendable {
+public struct MemoryMailClient: Sendable {
 
     /// The underlying in-memory mailbox used for validated storage.
     private let memoryMail: MemoryMail
 
-    /// Creates a new in-memory mail driver.
+    /// Creates a new in-memory mail client.
     ///
     /// - Parameter memoryMail: The mailbox instance used for storage.
     ///   Defaults to a new `MemoryMail` instance.
@@ -29,7 +29,7 @@ public struct MemoryMailDriver: Sendable {
     }
 }
 
-extension MemoryMailDriver: MailClient {
+extension MemoryMailClient: MailClient {
 
     /// Sends a mail by storing it in memory.
     ///
@@ -53,7 +53,7 @@ extension MemoryMailDriver: MailClient {
     }
 }
 
-extension MemoryMailDriver {
+extension MemoryMailClient {
 
     /// Returns all mails currently stored in the mailbox.
     ///
