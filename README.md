@@ -3,8 +3,8 @@
 In-memory mail client for Feather Mail, designed for tests and local development.
 It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
 
-[![Release: 1.0.0-beta.2](https://img.shields.io/badge/Release-1.0.0--beta.2-F05138)](
-    https://github.com/feather-framework/feather-memory-mail/releases/tag/1.0.0-beta.2
+[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1.0.0--beta.1-F05138)](
+    https://github.com/feather-framework/feather-memory-mail/releases/tag/1.0.0-beta.1
 )
 
 ## Features
@@ -32,7 +32,7 @@ It mirrors the behavior of real mail transports (SMTP, SES) without performing a
 Use Swift Package Manager; add the dependency to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/feather-framework/feather-memory-mail", exact: from: "1.0.0-beta.2"),
+.package(url: "https://github.com/feather-framework/feather-memory-mail", exact: from: "1.0.0-beta.1"),
 ```
 
 Then add `FeatherMemoryMail` to your target dependencies:
