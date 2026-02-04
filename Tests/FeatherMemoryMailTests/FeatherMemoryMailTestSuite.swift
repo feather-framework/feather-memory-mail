@@ -86,16 +86,18 @@ struct FeatherMemoryMailTestSuite {
 
         do {
             try await client.send(mail)
-            #expect(Bool(false))
+            Issue.record(
+                "Expected MailError.validation(.invalidSubject) to be thrown."
+            )
         }
         catch {
             if case let .validation(validationError) = error,
                 validationError == .invalidSubject
             {
-                #expect(true)
+                // Expected path.
             }
             else {
-                #expect(Bool(false))
+                Issue.record("Unexpected error thrown: \(error)")
             }
         }
 

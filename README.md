@@ -1,9 +1,9 @@
-# Feather Memory Mail 
+# Feather Memory Mail
 
 In-memory mail client for Feather Mail, designed for tests and local development.
 It mirrors the behavior of real mail transports (SMTP, SES) without performing any network operations.
 
-[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)](
+[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1.0.0--beta.1-F05138)](
     https://github.com/feather-framework/feather-memory-mail/releases/tag/1.0.0-beta.1
 )
 
@@ -21,11 +21,11 @@ It mirrors the behavior of real mail transports (SMTP, SES) without performing a
 
 - Swift 6.1+
 - Platforms:
-    - macOS 15+
-    - iOS 18+
-    - tvOS 18+
-    - watchOS 11+
-    - visionOS 2+
+  - macOS 15+
+  - iOS 18+
+  - tvOS 18+
+  - watchOS 11+
+  - visionOS 2+
 
 ## Installation
 
@@ -79,8 +79,8 @@ let mailbox = await client.getMailbox()
 
 - Build: `swift build`
 - Test:
-    - local: `make test`
-    - using Docker: `make docker-test`
+  - local: `make test`
+  - using Docker: `make docker-test`
 - Format: `make format`
 - Check: `make check`
 
